@@ -14,7 +14,7 @@
 ; MakeSmallest    = 0
 ; FuncOptimize    = 1
 ; Version         = 0.0.0
-; NumberOfBuilds  = 31
+; NumberOfBuilds  = 34
 ; 
 ; Debugger
 ; -------------------------------------------------------
@@ -31,7 +31,7 @@
 ; Editor
 ; -------------------------------------------------------
 ; CursorLine      = 48
-; CursorColumn    = 9
+; CursorColumn    = 36
 ; LabelSearch     = ""
 ; LabelRemark     = 0
 ; LabelAll        = 0
@@ -81,12 +81,13 @@
 ;
 ; ---------------------------------------------------------------
 ; game.ab3 -- Multi-level game via Tiled2Retro
-; 3 levels beschikbaar (level 0..2)
-; Pas #CURRENT_LEVEL aan om een ander level te laden
+;
+; Tiled2Retro is used to convert tilesheet.png to iff and
+; export Tiled maps/levels with flags to Amiblitz code
 ; ---------------------------------------------------------------
 
 ; ==== HIER KIES JE HET LEVEL ====
-#CURRENT_LEVEL = 0
+#CURRENT_LEVEL = 1
 #TOTAL_LEVELS  = 3
 
 
@@ -133,9 +134,6 @@ Repeat
 
   ; --- Render sprite ---
   ShowSprite 0, player\x, player\y, 0
-
-  VWait
-
 
 Until RawStatus(16)   ; quit on Q
 

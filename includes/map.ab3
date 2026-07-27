@@ -14,7 +14,7 @@
 ; MakeSmallest    = 0
 ; FuncOptimize    = 1
 ; Version         = 0.0.0
-; NumberOfBuilds  = 0
+; NumberOfBuilds  = 1
 ; 
 ; Debugger
 ; -------------------------------------------------------
@@ -30,8 +30,8 @@
 ; 
 ; Editor
 ; -------------------------------------------------------
-; CursorLine      = 36
-; CursorColumn    = 22
+; CursorLine      = 97
+; CursorColumn    = 14
 ; LabelSearch     = ""
 ; LabelRemark     = 0
 ; LabelAll        = 0
@@ -78,12 +78,9 @@
 ; Max Stencil     = 5
 ; Max XBSound     = 10
 ; /XTRA
-; ---------------------------------------------------------------
-; mapinit.ab3 -- Map initialisatie via Tiled2Retro
-; 3 levels beschikbaar (level 0..2)
-; Wordt ingevoegd in game.ab3 -- #CURRENT_LEVEL moet daarin
-; gedefinieerd zijn v??r XINCLUDE "mapinit.ab3"
-; ---------------------------------------------------------------
+; -----------------------------------------------------------------------
+; mapinit.ab3 -- Map initializition of maps generated using Tiled2Retro
+; -----------------------------------------------------------------------
 
 ; --- Constantes ---
 #MAP_COLS       = 20
@@ -108,50 +105,51 @@ Dim tilemap.w(#CELLS)
 Dim tileflags.w(#CELLS)
 
 ; ==============================================================
-; AMIGA mode: laad tilesheet + data + bouw BitMap
+; AMIGA mode: load tilesheet + data + build BitMap
 ; ==============================================================
 
-; --- Laad tilesheet IFF ---
+; --- Load tilesheet IFF ---
 BitMap 0, #SHEET_W, #SHEET_H, #BITPLANES
 LoadBitMap 0, "assets/tiles_3bp.iff", 0
-
-
 BitMap 1, 320,256,#BITPLANES
 BitMap 2, 320,256,#BITPLANES
 
-; --- Lees data van het gekozen level (Restore naar genummerd label) ---
-If #CURRENT_LEVEL = 0
-  Restore MapData0
-  For i = 0 To #CELLS - 1
-    Read tilemap(i)
-  Next i
-  Restore FlagData0
-  For i = 0 To #CELLS - 1
-    Read tileflags(i)
-  Next i
-EndIf
-If #CURRENT_LEVEL = 1
-  Restore MapData1
-  For i = 0 To #CELLS - 1
-    Read tilemap(i)
-  Next i
-  Restore FlagData1
-  For i = 0 To #CELLS - 1
-    Read tileflags(i)
-  Next i
-EndIf
-If #CURRENT_LEVEL = 2
-  Restore MapData2
-  For i = 0 To #CELLS - 1
-    Read tilemap(i)
-  Next i
-  Restore FlagData2
-  For i = 0 To #CELLS - 1
-    Read tileflags(i)
-  Next i
-EndIf
+; =============================
+; read data for level data
+; ============================
+
+; tilemap
+Select #CURRENT_LEVEL
+  Case 0
+    Restore MapData0
+  Case 1
+    Restore MapData1
+  Case 2
+    Restore MapData2
+End Select
+
+For i = 0 To #CELLS - 1
+  Read tilemap(i)
+Next i
+
+; tile flags
+Select #CURRENT_LEVEL
+  Case 0
+    Restore FlagData0
+  Case 1
+    Restore FlagData1
+  Case 2
+    Restore FlagData2
+End Select
+
+For i = 0 To #CELLS - 1
+  Read tileflags(i)
+Next i
 
 
+; ===================================
+; draw map on back- and front buffer
+; ===================================
 For y = 0 To #MAP_ROWS - 1
   For x = 0 To #MAP_COLS - 1
     idx    = y * #MAP_COLS + x
@@ -172,12 +170,10 @@ For y = 0 To #MAP_ROWS - 1
   Next x
 Next y
 
-; --- Pak sprite-tile uit de sheet ---
+; --- Pick a sprite tile from the sheet to use as the player sprite for now ---
 Use BitMap 0
 GetaShape 1, #SPRITE_SRCX, #SPRITE_SRCY, #TILE_SIZE, #TILE_SIZE
 GetaSprite 0, 1
 Free Shape 1
-
-VWait 50
 
 XINCLUDE "mapdata.ab3"
