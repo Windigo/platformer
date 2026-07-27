@@ -1,6 +1,6 @@
 # AmiBlitz Platformer
 
-A multi-level platformer game written in **AmiBlitz** (Blitz Basic 2) for the Amiga. Built using the **Tiled2Retro** workflow — tile maps are authored in Tiled and exported for use on classic Amiga hardware.
+A multi-level platformer game written in **AmiBlitz** (Blitz Basic 2) for the Amiga. Levels are designed in Tiled and converted to AmiBlitz data using **Tiled2Retro**. The initial game loop was bootstrapped via the exporter for a quick start, but all gameplay code has since been rewritten by hand.
 
 ## Features
 
