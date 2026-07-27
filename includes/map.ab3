@@ -30,8 +30,8 @@
 ; 
 ; Editor
 ; -------------------------------------------------------
-; CursorLine      = 88
-; CursorColumn    = 17
+; CursorLine      = 36
+; CursorColumn    = 22
 ; LabelSearch     = ""
 ; LabelRemark     = 0
 ; LabelAll        = 0
@@ -113,7 +113,7 @@ Dim tileflags.w(#CELLS)
 
 ; --- Laad tilesheet IFF ---
 BitMap 0, #SHEET_W, #SHEET_H, #BITPLANES
-LoadBitMap 0, "includes/tiles_3bp.iff", 0
+LoadBitMap 0, "assets/tiles_3bp.iff", 0
 
 
 BitMap 1, 320,256,#BITPLANES
