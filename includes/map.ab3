@@ -1,0 +1,183 @@
+; XTRA
+; Embedded .xtra Header
+; 
+; General Info
+; -------------------------------------------------------
+; ExePath         = "RAM:"
+; ExeFile         = "Prog.exe"
+; CreateIcon      = 0
+; Residents       = ""
+; 
+; Compiler
+; -------------------------------------------------------
+; StringBuffer    = 10240
+; MakeSmallest    = 0
+; FuncOptimize    = 1
+; Version         = 0.0.0
+; NumberOfBuilds  = 0
+; 
+; Debugger
+; -------------------------------------------------------
+; CliArgs         = ""
+; StackSize       = 32768
+; RuntimeDebug    = 0
+; DebugInfo       = 0
+; CreateDbgFile   = 0
+; OverflowCheck   = 0
+; AssemblerCheck  = 1
+; InterruptCheck  = 1
+; AutoRun         = 1
+; 
+; Editor
+; -------------------------------------------------------
+; CursorLine      = 88
+; CursorColumn    = 17
+; LabelSearch     = ""
+; LabelRemark     = 0
+; LabelAll        = 0
+; LabelCase       = 0
+; LabelPosition   = 0
+; 
+; Blitz Objects
+; -------------------------------------------------------
+; Max File        = 5
+; Max GadgetList  = 5
+; Max Shape       = 200
+; Max Bank        = 5
+; Max MenuList    = 5
+; Max GTList      = 20
+; Max Palette     = 4
+; Max BitMap      = 10
+; Max Screen      = 5
+; Max IntuiFont   = 5
+; Max BlitzFont   = 4
+; Max Window      = 20
+; Max IconInfo    = 1
+; Max MUIObject   = 50
+; Max AsyncReq    = 4
+; Max Req-Lib     = 5
+; Max GTMenuList  = 5
+; Max Console     = 5
+; Max TCPSock     = 5
+; Max Tape        = 5
+; Max TagList     = 5
+; Max Database    = 16
+; Max Sound       = 10
+; Max MedModule   = 8
+; Max Buffer      = 10
+; Max Queue       = 10
+; Max Sprite      = 20
+; Max Module      = 5
+; Max Slice       = 10
+; Max Page        = 4
+; Max CopList     = 10
+; Max PTModule    = 5
+; Max Anim        = 10
+; Max NChunky     = 50
+; Max Chunky      = 20
+; Max Stencil     = 5
+; Max XBSound     = 10
+; /XTRA
+; ---------------------------------------------------------------
+; mapinit.ab3 -- Map initialisatie via Tiled2Retro
+; 3 levels beschikbaar (level 0..2)
+; Wordt ingevoegd in game.ab3 -- #CURRENT_LEVEL moet daarin
+; gedefinieerd zijn v??r XINCLUDE "mapinit.ab3"
+; ---------------------------------------------------------------
+
+; --- Constantes ---
+#MAP_COLS       = 20
+#MAP_ROWS       = 16
+#TILE_SIZE      = 16
+#CELLS          = 320
+#SHEET_COLS     = 49
+#SHEET_W        = 784
+#SHEET_H        = 352
+#BITPLANES      = 3
+#SPRITE_TILE    = 459
+#SPRITE_SRCX    = 288
+#SPRITE_SRCY    = 144
+
+#FLAG_FLOOR  = 1
+#FLAG_WALL   = 2
+#FLAG_LADDER = 4
+#MAX_VY      = 6
+
+; --- Arrays ---
+Dim tilemap.w(#CELLS)
+Dim tileflags.w(#CELLS)
+
+; ==============================================================
+; AMIGA mode: laad tilesheet + data + bouw BitMap
+; ==============================================================
+
+; --- Laad tilesheet IFF ---
+BitMap 0, #SHEET_W, #SHEET_H, #BITPLANES
+LoadBitMap 0, "includes/tiles_3bp.iff", 0
+
+
+BitMap 1, 320,256,#BITPLANES
+BitMap 2, 320,256,#BITPLANES
+
+; --- Lees data van het gekozen level (Restore naar genummerd label) ---
+If #CURRENT_LEVEL = 0
+  Restore MapData0
+  For i = 0 To #CELLS - 1
+    Read tilemap(i)
+  Next i
+  Restore FlagData0
+  For i = 0 To #CELLS - 1
+    Read tileflags(i)
+  Next i
+EndIf
+If #CURRENT_LEVEL = 1
+  Restore MapData1
+  For i = 0 To #CELLS - 1
+    Read tilemap(i)
+  Next i
+  Restore FlagData1
+  For i = 0 To #CELLS - 1
+    Read tileflags(i)
+  Next i
+EndIf
+If #CURRENT_LEVEL = 2
+  Restore MapData2
+  For i = 0 To #CELLS - 1
+    Read tilemap(i)
+  Next i
+  Restore FlagData2
+  For i = 0 To #CELLS - 1
+    Read tileflags(i)
+  Next i
+EndIf
+
+
+For y = 0 To #MAP_ROWS - 1
+  For x = 0 To #MAP_COLS - 1
+    idx    = y * #MAP_COLS + x
+    tile.w = tilemap(idx)
+    If tile = 0 Then Goto skipBuild
+    sx.w = (tile MOD #SHEET_COLS) * #TILE_SIZE
+    sy.w = tile / #SHEET_COLS
+    sy   = sy * #TILE_SIZE
+    Use BitMap 0
+    GetaShape 0, sx, sy, #TILE_SIZE, #TILE_SIZE
+    Use BitMap 1
+    Blit 0, x * #TILE_SIZE, y * #TILE_SIZE
+
+    Use BitMap 2
+    Blit 0, x * #TILE_SIZE, y * #TILE_SIZE
+
+    .skipBuild:
+  Next x
+Next y
+
+; --- Pak sprite-tile uit de sheet ---
+Use BitMap 0
+GetaShape 1, #SPRITE_SRCX, #SPRITE_SRCY, #TILE_SIZE, #TILE_SIZE
+GetaSprite 0, 1
+Free Shape 1
+
+VWait 50
+
+XINCLUDE "mapdata.ab3"

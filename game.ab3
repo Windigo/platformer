@@ -1,0 +1,143 @@
+; XTRA
+; Embedded .xtra Header
+; 
+; General Info
+; -------------------------------------------------------
+; ExePath         = "AmigaShare:AmiblitzProjects/platformer"
+; ExeFile         = "Prog.exe"
+; CreateIcon      = 0
+; Residents       = ""
+; 
+; Compiler
+; -------------------------------------------------------
+; StringBuffer    = 10240
+; MakeSmallest    = 0
+; FuncOptimize    = 1
+; Version         = 0.0.0
+; NumberOfBuilds  = 31
+; 
+; Debugger
+; -------------------------------------------------------
+; CliArgs         = ""
+; StackSize       = 32768
+; RuntimeDebug    = 0
+; DebugInfo       = 0
+; CreateDbgFile   = 0
+; OverflowCheck   = 0
+; AssemblerCheck  = 1
+; InterruptCheck  = 1
+; AutoRun         = 1
+; 
+; Editor
+; -------------------------------------------------------
+; CursorLine      = 48
+; CursorColumn    = 9
+; LabelSearch     = ""
+; LabelRemark     = 0
+; LabelAll        = 0
+; LabelCase       = 0
+; LabelPosition   = 0
+; 
+; Blitz Objects
+; -------------------------------------------------------
+; Max File        = 5
+; Max GadgetList  = 5
+; Max Shape       = 200
+; Max Bank        = 5
+; Max MenuList    = 5
+; Max GTList      = 20
+; Max Palette     = 4
+; Max BitMap      = 10
+; Max Screen      = 5
+; Max IntuiFont   = 5
+; Max BlitzFont   = 4
+; Max Window      = 20
+; Max IconInfo    = 1
+; Max MUIObject   = 50
+; Max AsyncReq    = 4
+; Max Req-Lib     = 5
+; Max GTMenuList  = 5
+; Max Console     = 5
+; Max TCPSock     = 5
+; Max Tape        = 5
+; Max TagList     = 5
+; Max Database    = 16
+; Max Sound       = 10
+; Max MedModule   = 8
+; Max Buffer      = 10
+; Max Queue       = 10
+; Max Sprite      = 20
+; Max Module      = 5
+; Max Slice       = 10
+; Max Page        = 4
+; Max CopList     = 10
+; Max PTModule    = 5
+; Max Anim        = 10
+; Max NChunky     = 50
+; Max Chunky      = 20
+; Max Stencil     = 5
+; Max XBSound     = 10
+; /XTRA
+;
+; ---------------------------------------------------------------
+; game.ab3 -- Multi-level game via Tiled2Retro
+; 3 levels beschikbaar (level 0..2)
+; Pas #CURRENT_LEVEL aan om een ander level te laden
+; ---------------------------------------------------------------
+
+; ==== HIER KIES JE HET LEVEL ====
+#CURRENT_LEVEL = 0
+#TOTAL_LEVELS  = 3
+
+
+INCDIR "includes/"
+XINCLUDE "map.ab3"
+XINCLUDE "player.ab3"
+
+BLITZ
+BlitzKeys On
+
+
+Slice 0,44,3
+
+Use Slice 0
+Use Palette 0
+
+
+front_buffer.l = 1
+back_buffer.l = 2
+
+
+
+; ==============================================================
+; Game loop
+; ==============================================================
+
+Repeat
+
+  VWait
+
+  Show back_buffer
+
+  Use Palette 0
+
+  Exchange  front_buffer, back_buffer
+  Use BitMap back_buffer
+
+  ; --- Joystick input ---
+  jx = Joyx(1)
+  jy = Joyy(1)
+  jb = Joyb(1)
+
+
+
+  ; --- Render sprite ---
+  ShowSprite 0, player\x, player\y, 0
+
+  VWait
+
+
+Until RawStatus(16)   ; quit on Q
+
+AMIGA
+End
